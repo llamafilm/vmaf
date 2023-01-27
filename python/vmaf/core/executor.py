@@ -510,7 +510,7 @@ class Executor(TypeVersionEnabled):
 
         vf_cmd = ','.join(filter(lambda s: s!='', [select_cmd, crop_cmd, pad_cmd, scale_cmd] + filter_cmds))
 
-        ffmpeg_cmd = '{ffmpeg} {src_fmt_cmd} -i {src} -an -vsync 0 ' \
+        ffmpeg_cmd = '{ffmpeg} -start_number {src_frame} {src_fmt_cmd} -i {src} -an -vsync 0 ' \
                      '-pix_fmt {yuv_type} {vframes_cmd} -vf {vf_cmd} -f rawvideo ' \
                      '-sws_flags {resampling_type} -y -nostdin {dst}'
         ffmpeg_cmd = ffmpeg_cmd.format(
@@ -522,6 +522,7 @@ class Executor(TypeVersionEnabled):
             yuv_type=workfile_yuv_type,
             resampling_type=resampling_type,
             vframes_cmd=vframes_cmd,
+            src_frame = asset.ref_start_end_frame[0],
         )
 
         if self.logger:
@@ -562,7 +563,7 @@ class Executor(TypeVersionEnabled):
 
         vf_cmd = ','.join(filter(lambda s: s!='', [select_cmd, crop_cmd, pad_cmd, scale_cmd] + filter_cmds))
 
-        ffmpeg_cmd = '{ffmpeg} {src_fmt_cmd} -i {src} -an -vsync 0 ' \
+        ffmpeg_cmd = '{ffmpeg} -start_number {src_frame} {src_fmt_cmd} -i {src} -an -vsync 0 ' \
                      '-pix_fmt {yuv_type} {vframes_cmd} -vf {vf_cmd} -f rawvideo ' \
                      '-sws_flags {resampling_type} -y -nostdin {dst}'.format(
             ffmpeg=VmafExternalConfig.get_and_assert_ffmpeg(),
@@ -572,6 +573,7 @@ class Executor(TypeVersionEnabled):
             yuv_type=workfile_yuv_type,
             resampling_type=resampling_type,
             vframes_cmd=vframes_cmd,
+            src_frame = asset.dis_start_end_frame[0],
         )
 
         if self.logger:
@@ -685,7 +687,7 @@ class Executor(TypeVersionEnabled):
         if start_end_frame is None:
             return "", ""
         else:
-            start_frame, end_frame = start_end_frame
+            start_frame, end_frame = (0, start_end_frame[1] - start_end_frame[0])
             num_frames = end_frame - start_frame + 1
             return f"-vframes {num_frames}", f"select='gte(n\\,{start_frame})*gte({end_frame}\\,n)',setpts=PTS-STARTPTS"
 
