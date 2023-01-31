@@ -510,7 +510,7 @@ class Executor(TypeVersionEnabled):
 
         vf_cmd = ','.join(filter(lambda s: s!='', [select_cmd, crop_cmd, pad_cmd, scale_cmd] + filter_cmds))
 
-        ffmpeg_cmd = '{ffmpeg} -start_number {src_frame} {src_fmt_cmd} -i {src} -an -vsync 0 ' \
+        ffmpeg_cmd = '{ffmpeg} -start_number {src_frame} {src_fmt_cmd} -i "{src}" -an -vsync 0 ' \
                      '-pix_fmt {yuv_type} {vframes_cmd} -vf {vf_cmd} -f rawvideo ' \
                      '-sws_flags {resampling_type} -y -nostdin {dst}'
         ffmpeg_cmd = ffmpeg_cmd.format(
@@ -563,7 +563,7 @@ class Executor(TypeVersionEnabled):
 
         vf_cmd = ','.join(filter(lambda s: s!='', [select_cmd, crop_cmd, pad_cmd, scale_cmd] + filter_cmds))
 
-        ffmpeg_cmd = '{ffmpeg} -start_number {src_frame} {src_fmt_cmd} -i {src} -an -vsync 0 ' \
+        ffmpeg_cmd = '{ffmpeg} -start_number {src_frame} {src_fmt_cmd} -i "{src}" -an -vsync 0 ' \
                      '-pix_fmt {yuv_type} {vframes_cmd} -vf {vf_cmd} -f rawvideo ' \
                      '-sws_flags {resampling_type} -y -nostdin {dst}'.format(
             ffmpeg=VmafExternalConfig.get_and_assert_ffmpeg(),
